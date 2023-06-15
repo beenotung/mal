@@ -1,7 +1,7 @@
 import util from 'util'
-import { keyword, Keyword, symbol } from './token'
+import { AST, keyword, Keyword, Num, rational, symbol } from './token'
 
-export function parse(input: string) {
+export function parse(input: string): AST {
   let rest = input.trim()
 
   if (rest.length === 0) return symbol('empty')
@@ -86,28 +86,18 @@ function parse_char_type(char: string) {
   }
 }
 
-export type AST = Num | string | AST[] | Keyword | symbol
-
-export type Num =
-  | number
-  | { type: 'rational-number'; left: number; right: number }
-
 function parse_number(rest: string): ParseResult<Num> {
-  let when = 'parse_number(left)'
-  let left_result = parse_float(rest)
-  let value: Num = left_result.number
-  rest = left_result.rest
+  let when = 'parse_number(up)'
+  let up_result = parse_float(rest)
+  let value: Num = up_result.number
+  rest = up_result.rest
 
   if (rest[0] === '/') {
     rest = rest.slice(1)
-    when = 'parse_number(right)'
-    let right_result = parse_float(rest)
-    value = {
-      type: 'rational-number',
-      left: left_result.number,
-      right: right_result.number,
-    }
-    rest = right_result.rest
+    when = 'parse_number(down)'
+    let down_result = parse_float(rest)
+    value = rational(up_result.number, down_result.number)
+    rest = down_result.rest
   }
 
   let rest_char_type = parse_char_type(rest[0])

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import { AST, parse } from './reader'
-import { keyword, symbol } from './token'
+import { parse } from './reader'
+import { keyword, rational, symbol } from './token'
 
 describe('reader TestSuit', () => {
   it('should parse empty input', () => {
@@ -16,12 +16,7 @@ describe('reader TestSuit', () => {
   })
 
   it('should parse rational number', () => {
-    let ast: AST = {
-      type: 'rational-number',
-      left: 2,
-      right: 3,
-    }
-    expect(parse('2/3')).to.deep.equals(ast)
+    expect(parse('2/3')).to.deep.equals(rational(2, 3))
   })
 
   it('should parse string', () => {
