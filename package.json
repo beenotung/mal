@@ -7,6 +7,8 @@
     "mal": "dist/cli.js"
   },
   "scripts": {
+    "start": "ts-node src/cli.ts",
+    "mocha": "ts-mocha src/reader.spec.ts",
     "test": "tsc --noEmit",
     "build": "tsc -p ."
   },
@@ -14,7 +16,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^20.3.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.1.3"
