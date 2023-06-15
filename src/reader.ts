@@ -6,23 +6,37 @@ export function parse(input: string) {
 
   if (rest.length === 0) return symbol('empty')
 
+  let result = parse_one(rest)
+  return check_parse_result(result)
+}
+
+function parse_one(rest: string): ParseResult<AST> {
   let char_type = parse_char_type(rest[0])
   switch (char_type) {
     case digit:
-      return check_parse_result(parse_number(rest))
+      return parse_number(rest)
     case string_quote:
-      return check_parse_result(parse_string(rest))
+      return parse_string(rest)
+    case open_bracket:
+      return parse_bracket(rest)
+    case symbol_char:
+      return parse_symbol(rest)
     default:
-      throw new ParseError({ when: 'parse', rest })
+      throw new ParseError({
+        when: 'parse',
+        message: 'unknown char_type',
+        char_type,
+        rest,
+      })
   }
 }
 
-type ParseResult = {
-  value: any
+type ParseResult<T> = {
+  value: T
   rest: string
 }
 
-function check_parse_result(result: ParseResult) {
+function check_parse_result(result: ParseResult<AST>) {
   if (result.rest.length === 0) {
     return result.value
   }
@@ -34,6 +48,7 @@ let string_quote = symbol('string-quote')
 let whitespace = symbol('whitespace')
 let open_bracket = symbol('open-bracket')
 let close_bracket = symbol('close-bracket')
+let symbol_char = symbol('symbol-char')
 let empty = symbol('empty')
 let other = symbol('other')
 
@@ -62,18 +77,20 @@ function parse_char_type(char: string) {
     case '\n':
     case '\t':
       return whitespace
+    case ':':
+      return symbol_char
     default:
       return other
   }
 }
 
-export type AST = Num
+export type AST = Num | string | AST[] | symbol
 
 export type Num =
   | number
   | { type: 'rational-number'; left: number; right: number }
 
-function parse_number(rest: string) {
+function parse_number(rest: string): ParseResult<Num> {
   let when = 'parse_number(left)'
   let left_result = parse_float(rest)
   let value: Num = left_result.number
@@ -113,7 +130,7 @@ function parse_float(rest: string) {
   return { number, rest }
 }
 
-function parse_string(rest: string) {
+function parse_string(rest: string): ParseResult<string> {
   let value = ''
   let char
   let len = rest.length
@@ -147,6 +164,49 @@ function parse_string(rest: string) {
         break
     }
     value += char
+  }
+}
+
+function parse_bracket(rest: string): ParseResult<AST[]> {
+  rest = rest.slice(1)
+  let value: AST[] = []
+  for (;;) {
+    if (rest.length === 0) {
+      throw new ParseError({
+        when: 'parse_bracket',
+        message: 'missing close-bracket',
+        value,
+        rest,
+      })
+    }
+    let char = rest[0]
+    if (char === ')') {
+      rest = rest.slice(1).trim()
+      return { value, rest }
+    }
+    let result = parse_one(rest)
+    value.push(result.value)
+    rest = result.rest
+  }
+}
+
+function parse_symbol(rest: string): ParseResult<symbol> {
+  rest = rest.slice(1)
+  let value = ''
+  for (;;) {
+    if (rest.length === 0) {
+      return { value: symbol(value), rest }
+    }
+    let char = rest[0]
+    let char_type = parse_char_type(char)
+    switch (char_type) {
+      case whitespace:
+      case close_bracket:
+        return { value: symbol(value), rest }
+      default:
+        value += char
+        rest = rest.slice(1)
+    }
   }
 }
 

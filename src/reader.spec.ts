@@ -31,4 +31,16 @@ describe('reader TestSuit', () => {
   it('should parse string with escape sequence', () => {
     expect(parse('"12\\"34"')).to.equals('12"34')
   })
+
+  it('should parse list', () => {
+    expect(parse('(1 2 3)')).to.deep.equals([1, 2, 3])
+  })
+
+  it('should parse nested list', () => {
+    expect(parse('(1 (2 3) (4 5))')).to.deep.equals([1, [2, 3], [4, 5]])
+  })
+
+  it('should parse symbol', () => {
+    expect(parse(':class-name')).to.equals(symbol('class-name'))
+  })
 })

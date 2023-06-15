@@ -6,7 +6,8 @@
 - [x] Float
 - [x] Rational Number
 - [x] String
-- [ ] List
+- [x] List
+- [x] Symbol
 - [ ] Array
 - [ ] Object
 - [ ] Map
