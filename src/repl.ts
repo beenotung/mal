@@ -1,6 +1,6 @@
 import readline from 'readline'
 import { parse } from './reader'
-import { symbol } from './symbol'
+import { symbol } from './token'
 
 let io = readline.createInterface({
   input: process.stdin,

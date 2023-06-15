@@ -8,6 +8,7 @@
 - [x] String
 - [x] List
 - [x] Symbol
+- [x] Keyword
 - [ ] Array
 - [ ] Object
 - [ ] Map

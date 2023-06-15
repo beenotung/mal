@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { AST, parse } from './reader'
-import { symbol } from './symbol'
+import { keyword, symbol } from './token'
 
 describe('reader TestSuit', () => {
   it('should parse empty input', () => {
@@ -40,7 +40,16 @@ describe('reader TestSuit', () => {
     expect(parse('(1 (2 3) (4 5))')).to.deep.equals([1, [2, 3], [4, 5]])
   })
 
+  it('should parse keyword', () => {
+    expect(parse(':class-name')).to.equals(keyword('class-name'))
+  })
+
   it('should parse symbol', () => {
-    expect(parse(':class-name')).to.equals(symbol('class-name'))
+    expect(parse('+')).to.equals(symbol('+'))
+    expect(parse('inc')).to.equals(symbol('inc'))
+  })
+
+  it('should parse function call', () => {
+    expect(parse('(+ 2 3)')).to.deep.equals([symbol('+'), 2, 3])
   })
 })

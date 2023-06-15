@@ -1,5 +1,5 @@
 import util from 'util'
-import { symbol } from './symbol'
+import { keyword, Keyword, symbol } from './token'
 
 export function parse(input: string) {
   let rest = input.trim()
@@ -19,12 +19,14 @@ function parse_one(rest: string): ParseResult<AST> {
       return parse_string(rest)
     case open_bracket:
       return parse_bracket(rest)
+    case keyword_char:
+      return parse_keyword(rest)
     case symbol_char:
       return parse_symbol(rest)
     default:
       throw new ParseError({
-        when: 'parse',
-        message: 'unknown char_type',
+        when: 'parse_one',
+        message: 'unexpected char_type',
         char_type,
         rest,
       })
@@ -48,9 +50,9 @@ let string_quote = symbol('string-quote')
 let whitespace = symbol('whitespace')
 let open_bracket = symbol('open-bracket')
 let close_bracket = symbol('close-bracket')
-let symbol_char = symbol('symbol-char')
+let keyword_char = symbol('keyword-char')
 let empty = symbol('empty')
-let other = symbol('other')
+let symbol_char = symbol('other')
 
 function parse_char_type(char: string) {
   switch (char) {
@@ -78,13 +80,13 @@ function parse_char_type(char: string) {
     case '\t':
       return whitespace
     case ':':
-      return symbol_char
+      return keyword_char
     default:
-      return other
+      return symbol_char
   }
 }
 
-export type AST = Num | string | AST[] | symbol
+export type AST = Num | string | AST[] | Keyword | symbol
 
 export type Num =
   | number
@@ -186,12 +188,31 @@ function parse_bracket(rest: string): ParseResult<AST[]> {
     }
     let result = parse_one(rest)
     value.push(result.value)
-    rest = result.rest
+    rest = result.rest.trim()
+  }
+}
+
+function parse_keyword(rest: string): ParseResult<Keyword> {
+  rest = rest.slice(1)
+  let value = ''
+  for (;;) {
+    if (rest.length === 0) {
+      return { value: keyword(value), rest }
+    }
+    let char = rest[0]
+    let char_type = parse_char_type(char)
+    switch (char_type) {
+      case whitespace:
+      case close_bracket:
+        return { value: keyword(value), rest }
+      default:
+        value += char
+        rest = rest.slice(1)
+    }
   }
 }
 
 function parse_symbol(rest: string): ParseResult<symbol> {
-  rest = rest.slice(1)
   let value = ''
   for (;;) {
     if (rest.length === 0) {
