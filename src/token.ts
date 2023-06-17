@@ -15,12 +15,14 @@ export type Rational = {
 }
 
 export function rational(up: number, down: number): Rational | number {
-  if (down === 1) {
-    return up
-  }
-  if (up % down === 0) {
-    return up / down
-  }
+  if (down === 1) return up
+  if (up === 1)
+    return {
+      type: 'rational',
+      up,
+      down,
+    }
+  if (up % down === 0) return up / down
   let factor = gcm(up, down)
   if (factor !== 1) {
     up /= factor

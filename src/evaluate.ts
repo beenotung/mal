@@ -205,20 +205,17 @@ function divide_two(left: AST, right: AST): AST {
     return rational(left, right)
   }
   if (typeof right === 'number') {
-    right = one_divide(right)
+    right = rational(1, right)
   } else {
     right = castRational(right, { when: 'divide', message: 'expect Num' })
+    right = rational(right.down, right.up)
   }
   return multiply_two(left, right)
 }
 
 function castRational(ast: AST, context: ContextType): Rational {
-  if (Array.isArray(ast)) {
-    throw new EvaluationError({ ...context, ast })
-  }
-  if (typeof ast == 'object' && ast.type === 'rational') {
+  if (typeof ast == 'object' && !Array.isArray(ast) && ast.type === 'rational')
     return ast
-  }
   throw new EvaluationError({ ...context, ast })
 }
 
