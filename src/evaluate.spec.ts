@@ -25,13 +25,13 @@ describe('evaluate TestSuit', () => {
           evaluate([symbol('+'), rational(1, 3), rational(1, 3)]),
         ).to.deep.equal(rational(2, 3))
       })
-      it.skip('should evaluate -', () => {
+      it('should evaluate -', () => {
         expect(evaluate([symbol('-'), 5, 2])).to.equal(3)
       })
       it('should evaluate *', () => {
         expect(evaluate([symbol('*'), 2, 3])).to.equal(6)
       })
-      it.skip('should evaluate /', () => {
+      it('should evaluate /', () => {
         expect(evaluate([symbol('/'), 6, 3])).to.equal(2)
       })
     })
