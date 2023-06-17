@@ -10,7 +10,11 @@ export function evaluate(ast: AST): AST {
     return ast
   }
   if (typeof ast === 'symbol') {
-    return ast
+    throw new EvaluationError({
+      when: 'evaluate',
+      message: 'lookup not implemented',
+      keyword: ast,
+    })
   }
   if (Array.isArray(ast)) {
     return evaluate_list(ast)
@@ -19,11 +23,7 @@ export function evaluate(ast: AST): AST {
     return ast
   }
   if (ast.type === 'keyword') {
-    throw new EvaluationError({
-      when: 'evaluate',
-      message: 'lookup not implemented',
-      keyword: ast,
-    })
+    return ast
   }
   let _: never = ast
   throw new EvaluationError({

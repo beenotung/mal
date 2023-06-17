@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { evaluate } from './evaluate'
-import { AST, rational, symbol } from './token'
+import { AST, keyword, rational, symbol } from './token'
 
 describe('evaluate TestSuit', () => {
   describe('echo literal value', () => {
@@ -13,8 +13,8 @@ describe('evaluate TestSuit', () => {
     it('should echo string', () => {
       expect(evaluate('cat')).to.equals('cat')
     })
-    it('should echo symbol', () => {
-      expect(evaluate(symbol('cat'))).to.equals(symbol('cat'))
+    it('should echo keyword', () => {
+      expect(evaluate(keyword('dev-deps'))).to.equals(keyword('dev-deps'))
     })
   })
   describe('evaluate list', () => {
