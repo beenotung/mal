@@ -15,6 +15,10 @@ export type Rational = {
 }
 
 export function rational(up: number, down: number): Rational | number {
+  if (down < 0) {
+    up = -up
+    down = -down
+  }
   if (down === 1) return up
   if (up === 1)
     return {

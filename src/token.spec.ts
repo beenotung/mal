@@ -19,4 +19,11 @@ describe('rational AST constructor', () => {
   it('should simplify by lcm when possible', () => {
     expect(rational(3, 6)).to.deep.equals(rational(1, 2))
   })
+  it('should cancel negative sign when possible', () => {
+    expect(rational(-1, -2)).to.deep.equals(rational(1, 2))
+  })
+  it('should put negative sign on upper part', () => {
+    expect(rational(1, -2)).to.deep.equals(rational(-1, 2))
+    expect(rational(-1, 2)).to.deep.equals(rational(-1, 2))
+  })
 })
