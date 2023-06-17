@@ -338,6 +338,121 @@ function new_map(args: AST[]): AST {
   return map
 }
 
+function greater(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '>',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!greater_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function greater_two(left: AST, right: AST): boolean {
+  left = castNum(left, { when: '>' })
+  right = castNum(right, { when: '>' })
+  return left > right
+}
+
+function greater_or_equal(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '>=',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!greater_or_equal_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function greater_or_equal_two(left: AST, right: AST): boolean {
+  left = castNum(left, { when: '>=' })
+  right = castNum(right, { when: '>=' })
+  return left >= right
+}
+
+function lesser(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '<',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!lesser_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function lesser_two(left: AST, right: AST): boolean {
+  left = castNum(left, { when: '<' })
+  right = castNum(right, { when: '<' })
+  return left < right
+}
+
+function lesser_or_equal(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '<=',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!lesser_or_equal_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function lesser_or_equal_two(left: AST, right: AST): boolean {
+  left = castNum(left, { when: '<=' })
+  right = castNum(right, { when: '<=' })
+  return left <= right
+}
+
+function equal(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '=',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!equal_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function equal_two(left: AST, right: AST): boolean {
+  left = castNum(left, { when: '=' })
+  right = castNum(right, { when: '=' })
+  return left == right
+}
+
 let fns = {
   [symbol('+')]: add,
   [symbol('-')]: minus,
@@ -365,6 +480,11 @@ let fns = {
   [symbol('new-array')]: list,
   [symbol('new-set')]: new_set,
   [symbol('new-map')]: new_map,
+  [symbol('>')]: greater,
+  [symbol('>=')]: greater_or_equal,
+  [symbol('<')]: lesser,
+  [symbol('<=')]: lesser_or_equal,
+  [symbol('=')]: equal,
 }
 
 function castRational(ast: AST, context: { when: string }): Rational {

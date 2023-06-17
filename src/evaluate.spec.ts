@@ -55,7 +55,7 @@ describe('evaluate TestSuit', () => {
     })
   })
   describe('evaluate list', () => {
-    describe('math evaluate', () => {
+    describe('math expression', () => {
       describe('numerical operators', () => {
         it('should evaluate +', () => {
           expect(evaluate([symbol('+')])).to.equals(0)
@@ -247,6 +247,28 @@ describe('evaluate TestSuit', () => {
           [[0.5], Math.tan(0.5)],
           [[rational(1, 2)], Math.tan(1 / 2)],
         ])
+      })
+    })
+    describe.only('comparison expression', () => {
+      it('should compare >', () => {
+        expect(evaluate([symbol('>'), 3, 2])).to.be.true
+        expect(evaluate([symbol('>'), 3, 3])).to.be.false
+      })
+      it('should compare >=', () => {
+        expect(evaluate([symbol('>='), 3, 3])).to.be.true
+        expect(evaluate([symbol('>='), 2, 3])).to.be.false
+      })
+      it('should compare <', () => {
+        expect(evaluate([symbol('<'), 2, 3])).to.be.true
+        expect(evaluate([symbol('<'), 2, 2])).to.be.false
+      })
+      it('should compare <=', () => {
+        expect(evaluate([symbol('<='), 2, 2])).to.be.true
+        expect(evaluate([symbol('<='), 3, 2])).to.be.false
+      })
+      it('should compare =', () => {
+        expect(evaluate([symbol('='), 2, 2])).to.be.true
+        expect(evaluate([symbol('='), 2, 3])).to.be.false
       })
     })
   })
