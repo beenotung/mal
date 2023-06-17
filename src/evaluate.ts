@@ -3,11 +3,8 @@ import { AST, Rational, rational, symbol } from './token'
 import { lcm } from './math'
 
 export function evaluate(ast: AST): AST {
-  if (typeof ast === 'string') {
-    return ast
-  }
-  if (typeof ast === 'number') {
-    return ast
+  if (Array.isArray(ast)) {
+    return evaluate_list(ast)
   }
   if (typeof ast === 'symbol') {
     throw new EvaluationError({
@@ -16,16 +13,14 @@ export function evaluate(ast: AST): AST {
       keyword: ast,
     })
   }
-  if (Array.isArray(ast)) {
-    return evaluate_list(ast)
-  }
-  if (ast instanceof Set) {
-    return ast
-  }
-  if (ast.type === 'rational') {
-    return ast
-  }
-  if (ast.type === 'keyword') {
+  if (
+    typeof ast === 'string' ||
+    typeof ast === 'number' ||
+    ast instanceof Set ||
+    ast instanceof Map ||
+    ast.type === 'rational' ||
+    ast.type === 'keyword'
+  ) {
     return ast
   }
   let _: never = ast
@@ -324,6 +319,20 @@ function new_set(args: AST[]): AST {
   return new Set(args.map(ast => evaluate(ast)))
 }
 
+function new_map(args: AST[]): AST {
+  if (args.length % 2 !== 0)
+    throw new EvaluationError({
+      when: 'new_map',
+      message: 'expect odd number of args',
+      args,
+    })
+  let map = new Map()
+  for (let i = 0; i < args.length; i += 2) {
+    map.set(evaluate(args[i]), evaluate(args[i + 1]))
+  }
+  return map
+}
+
 let fns = {
   [symbol('+')]: add,
   [symbol('-')]: minus,
@@ -350,13 +359,15 @@ let fns = {
   [symbol('list')]: list,
   [symbol('new-array')]: list,
   [symbol('new-set')]: new_set,
+  [symbol('new-map')]: new_map,
 }
 
 function castRational(ast: AST, context: { when: string }): Rational {
   if (
-    typeof ast == 'object' &&
+    typeof ast === 'object' &&
     !Array.isArray(ast) &&
     !(ast instanceof Set) &&
+    !(ast instanceof Map) &&
     ast.type === 'rational'
   )
     return ast

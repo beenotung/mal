@@ -17,7 +17,7 @@ describe('evaluate TestSuit', () => {
       expect(evaluate(keyword('dev-deps'))).to.equals(keyword('dev-deps'))
     })
   })
-  describe.only('build-in data type', () => {
+  describe('build-in data type', () => {
     it('should create list/Array', () => {
       expect(
         evaluate([symbol('list'), 2, [symbol('+'), 3, 4], 5]),
@@ -30,6 +30,22 @@ describe('evaluate TestSuit', () => {
       expect(
         evaluate([symbol('new-set'), 2, [symbol('+'), 3, 4], 5]),
       ).to.deep.equals(new Set([2, 7, 5]))
+    })
+    it('should create Map', () => {
+      expect(
+        evaluate([
+          symbol('new-map'),
+          [symbol('+'), 1, 1],
+          'two',
+          keyword('version'),
+          [symbol('+'), 2, 3],
+        ]),
+      ).to.deep.equals(
+        new Map<AST, AST>([
+          [2, 'two'],
+          [keyword('version'), 5],
+        ]),
+      )
     })
   })
   describe('evaluate list', () => {
