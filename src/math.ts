@@ -1,8 +1,8 @@
 export function lcm(a: number, b: number): number {
-  return (a * b) / gcm(a, b)
+  return (a * b) / gcd(a, b)
 }
 
-export function gcm(a: number, b: number): number {
+export function gcd(a: number, b: number): number {
   let tmp
   for (;;) {
     if (b === 0) return a

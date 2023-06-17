@@ -1,4 +1,4 @@
-import { gcm } from './math'
+import { gcd } from './math'
 
 export type AST = Num | string | AST[] | Keyword | symbol
 
@@ -27,7 +27,7 @@ export function rational(up: number, down: number): Rational | number {
       down,
     }
   if (up % down === 0) return up / down
-  let factor = gcm(up, down)
+  let factor = gcd(up, down)
   if (factor !== 1) {
     up /= factor
     down /= factor
