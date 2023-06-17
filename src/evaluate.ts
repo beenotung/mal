@@ -2,7 +2,7 @@ import util from 'util'
 import { AST, Rational, rational, symbol } from './token'
 import { lcm } from './math'
 
-export function evaluate(ast: AST) {
+export function evaluate(ast: AST): AST {
   if (typeof ast === 'string') {
     return ast
   }
@@ -19,7 +19,11 @@ export function evaluate(ast: AST) {
     return ast
   }
   if (ast.type === 'keyword') {
-    return { lookup: ast }
+    throw new EvaluationError({
+      when: 'evaluate',
+      message: 'lookup not implemented',
+      keyword: ast,
+    })
   }
   let _: never = ast
   throw new EvaluationError({
@@ -66,9 +70,9 @@ function add(args: AST[]): AST {
   if (args.length === 0) {
     return 0
   }
-  let left = args[0]
+  let left = evaluate(args[0])
   for (let i = 1; i < args.length; i++) {
-    left = add_two(left, args[i])
+    left = add_two(left, evaluate(args[i]))
   }
   return left
 }
@@ -102,7 +106,7 @@ function minus(args: AST[]): AST {
   if (args.length === 0) {
     return 0
   }
-  let left = args[0]
+  let left = evaluate(args[0])
   if (args.length === 1) {
     if (typeof left === 'number') {
       return -left
@@ -111,7 +115,7 @@ function minus(args: AST[]): AST {
     return rational(-left.up, left.down)
   }
   for (let i = 1; i < args.length; i++) {
-    left = minus_two(left, args[i])
+    left = minus_two(left, evaluate(args[i]))
   }
   return left
 }
@@ -144,9 +148,9 @@ function multiply(args: AST[]): AST {
   if (args.length === 0) {
     return 1
   }
-  let left = args[0]
+  let left = evaluate(args[0])
   for (let i = 1; i < args.length; i++) {
-    left = multiply_two(left, args[i])
+    left = multiply_two(left, evaluate(args[i]))
   }
   return left
 }
@@ -180,12 +184,12 @@ function divide(args: AST[]): AST {
   if (args.length === 0) {
     return 1
   }
-  let left = args[0]
+  let left = evaluate(args[0])
   if (args.length === 1) {
     return one_divide(left)
   }
   for (let i = 1; i < args.length; i++) {
-    left = divide_two(left, args[i])
+    left = divide_two(left, evaluate(args[i]))
   }
   return left
 }

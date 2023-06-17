@@ -55,6 +55,28 @@ describe('evaluate TestSuit', () => {
           evaluate([symbol('/'), rational(2, 3), rational(4, 5)]),
         ).to.deep.equals(rational(5, 6))
       })
+      it('should evaluate nested +', () => {
+        expect(
+          evaluate([symbol('*'), [symbol('+'), 2, 3], [symbol('+'), 4, 5]]),
+        ).to.equals((2 + 3) * (4 + 5))
+      })
+      it('should evaluate nested -', () => {
+        expect(
+          evaluate([symbol('*'), [symbol('-'), 2, 3], [symbol('-'), 4, 5]]),
+        ).to.equals((2 - 3) * (4 - 5))
+      })
+      it('should evaluate nested *', () => {
+        expect(
+          evaluate([symbol('+'), [symbol('*'), 2, 3], [symbol('*'), 4, 5]]),
+        ).to.equals(2 * 3 + 4 * 5)
+      })
+      it('should evaluate nested /', () => {
+        expect(
+          evaluate([symbol('+'), [symbol('/'), 2, 3], [symbol('/'), 4, 5]]),
+        ).to.deep.equals(
+          evaluate([symbol('+'), rational(2, 3), rational(4, 5)]),
+        )
+      })
     })
   })
 })
