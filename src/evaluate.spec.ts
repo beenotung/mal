@@ -17,6 +17,21 @@ describe('evaluate TestSuit', () => {
       expect(evaluate(keyword('dev-deps'))).to.equals(keyword('dev-deps'))
     })
   })
+  describe.only('build-in data type', () => {
+    it('should create list/Array', () => {
+      expect(
+        evaluate([symbol('list'), 2, [symbol('+'), 3, 4], 5]),
+      ).to.deep.equals([2, 7, 5])
+      expect(
+        evaluate([symbol('new-array'), 2, [symbol('+'), 3, 4], 5]),
+      ).to.deep.equals([2, 7, 5])
+    })
+    it('should create Set', () => {
+      expect(
+        evaluate([symbol('new-set'), 2, [symbol('+'), 3, 4], 5]),
+      ).to.deep.equals(new Set([2, 7, 5]))
+    })
+  })
   describe('evaluate list', () => {
     describe('math evaluate', () => {
       describe('numerical operators', () => {

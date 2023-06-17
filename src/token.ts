@@ -1,6 +1,6 @@
 import { gcd } from './math'
 
-export type AST = Num | string | AST[] | Keyword | symbol
+export type AST = Num | string | AST[] | Keyword | symbol | Set<AST>
 
 export type Num = number | Rational
 

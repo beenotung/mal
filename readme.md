@@ -12,6 +12,14 @@
 | symbol   | kebab-case?            |
 | list     | (+ 2 3)                |
 
+## Built-In Data Types
+
+| Data Type | Example Creation Expression |
+| --------- | --------------------------- |
+| list      | (list 2 3)                  |
+| Array     | (new-array 2 3)             |
+| Set       | (new-set 2 3)               |
+
 ## To Do
 
 - [ ] Variable

@@ -19,6 +19,9 @@ export function evaluate(ast: AST): AST {
   if (Array.isArray(ast)) {
     return evaluate_list(ast)
   }
+  if (ast instanceof Set) {
+    return ast
+  }
   if (ast.type === 'rational') {
     return ast
   }
@@ -313,6 +316,14 @@ function tan(args: AST[]): AST {
   return Math.tan(castNumArg(args, { when: 'tan' }))
 }
 
+function list(args: AST[]): AST {
+  return args.map(ast => evaluate(ast))
+}
+
+function new_set(args: AST[]): AST {
+  return new Set(args.map(ast => evaluate(ast)))
+}
+
 let fns = {
   [symbol('+')]: add,
   [symbol('-')]: minus,
@@ -336,10 +347,18 @@ let fns = {
   [symbol('sin')]: sin,
   [symbol('sqrt')]: sqrt,
   [symbol('tan')]: tan,
+  [symbol('list')]: list,
+  [symbol('new-array')]: list,
+  [symbol('new-set')]: new_set,
 }
 
 function castRational(ast: AST, context: { when: string }): Rational {
-  if (typeof ast == 'object' && !Array.isArray(ast) && ast.type === 'rational')
+  if (
+    typeof ast == 'object' &&
+    !Array.isArray(ast) &&
+    !(ast instanceof Set) &&
+    ast.type === 'rational'
+  )
     return ast
   throw new EvaluationError({ when: context.when, message: 'expect Num', ast })
 }
