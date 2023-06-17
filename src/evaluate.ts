@@ -1,5 +1,6 @@
 import util from 'util'
 import { AST, Rational, rational, symbol } from './token'
+import { lcm } from './math'
 
 export function evaluate(ast: AST) {
   if (typeof ast === 'string') {
@@ -219,27 +220,6 @@ function castRational(ast: AST, context: ContextType): Rational {
     return ast
   }
   throw new EvaluationError({ ...context, ast })
-}
-
-function lcm(a: number, b: number): number {
-  return (a * b) / gcm(a, b)
-}
-
-function gcm(a: number, b: number): number {
-  let tmp
-  for (;;) {
-    if (b === 0) return a
-    if (a === b) return a
-    if (a < b) {
-      tmp = a
-      a = b
-      b = tmp
-    } else {
-      tmp = a % b
-      a = b
-      b = tmp
-    }
-  }
 }
 
 type ContextType<T extends object = {}> = T & {

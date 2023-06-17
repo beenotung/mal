@@ -1,3 +1,5 @@
+import { gcm } from './math'
+
 export type AST = Num | string | AST[] | Keyword | symbol
 
 export type Num = number | Rational
@@ -18,6 +20,11 @@ export function rational(up: number, down: number): Rational | number {
   }
   if (up % down === 0) {
     return up / down
+  }
+  let factor = gcm(up, down)
+  if (factor !== 1) {
+    up /= factor
+    down /= factor
   }
   return {
     type: 'rational',
