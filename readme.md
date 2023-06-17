@@ -1,14 +1,21 @@
 # mal (make-a-lisp) practice
 
-## Data Types
+## Expressions
 
-- [x] Integer
-- [x] Float
-- [x] Rational Number
-- [x] String
-- [x] List
-- [x] Symbol
-- [x] Keyword
+| Type     | Example                |
+| -------- | ---------------------- |
+| integer  | 1                      |
+| float    | 0.5                    |
+| rational | 1/2                    |
+| string   | "string with \" quote" |
+| keyword  | :kebab-case?           |
+| symbol   | kebab-case?            |
+| list     | (+ 2 3)                |
+
+## To Do
+
+- [ ] Variable
+- [ ] Boolean
 - [ ] Array
 - [ ] Object
 - [ ] Map
