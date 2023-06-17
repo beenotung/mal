@@ -44,7 +44,17 @@ describe('reader TestSuit', () => {
     expect(parse('inc')).to.equals(symbol('inc'))
   })
 
-  it('should parse function call', () => {
+  it('should parse list', () => {
     expect(parse('(+ 2 3)')).to.deep.equals([symbol('+'), 2, 3])
+  })
+
+  describe('whitespace handling', () => {
+    it('should parse list with leading whitespace', () => {
+      expect(parse('( + 2 3)')).to.deep.equals([symbol('+'), 2, 3])
+    })
+
+    it('should parse list with tailing whitespace', () => {
+      expect(parse('(+ 2 3 )')).to.deep.equals([symbol('+'), 2, 3])
+    })
   })
 })

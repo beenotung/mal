@@ -160,7 +160,7 @@ function parse_string(rest: string): ParseResult<string> {
 }
 
 function parse_bracket(rest: string): ParseResult<AST[]> {
-  rest = rest.slice(1)
+  rest = rest.slice(1).trim()
   let value: AST[] = []
   for (;;) {
     if (rest.length === 0) {
