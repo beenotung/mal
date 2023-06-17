@@ -80,14 +80,36 @@ describe('evaluate TestSuit', () => {
         })
       })
       describe('math functions', () => {
+        class TestPrepareError extends Error {
+          constructor(public inputs: AST[]) {
+            super(JSON.stringify({ inputs }))
+          }
+        }
+        function wrapNum(inputs: AST[]) {
+          if (inputs.length === 0) return
+          let ast = inputs[0]
+          if (Array.isArray(ast)) {
+            if (ast.length === 0) return
+            ast[0] = [symbol('+'), ast[0], 0]
+            return
+          }
+          if (
+            typeof ast === 'number' ||
+            (typeof ast === 'object' && ast.type == 'rational')
+          ) {
+            inputs[0] = [symbol('+'), ast, 0]
+            return
+          }
+          throw new TestPrepareError(inputs)
+        }
         function test(
           name: string,
           samples: [inputs: AST[], expectedOutput: AST][],
         ) {
           it(`should evaluate ${name}`, () => {
             for (let [inputs, expectedOutput] of samples) {
+              wrapNum(inputs)
               let actualOutput = evaluate([symbol(name), ...inputs])
-              // console.log({ name, inputs, expectedOutput, actualOutput })
               expect(actualOutput).to.deep.equals(expectedOutput)
             }
           })
