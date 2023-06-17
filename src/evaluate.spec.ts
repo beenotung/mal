@@ -16,6 +16,12 @@ describe('evaluate TestSuit', () => {
     it('should echo keyword', () => {
       expect(evaluate(keyword('dev-deps'))).to.equals(keyword('dev-deps'))
     })
+    it('should echo true', () => {
+      expect(evaluate(keyword('true'))).to.be.true
+    })
+    it('should echo false', () => {
+      expect(evaluate(keyword('false'))).to.be.false
+    })
   })
   describe('build-in data type', () => {
     it('should create list/Array', () => {

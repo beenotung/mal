@@ -2,15 +2,16 @@
 
 ## Expressions
 
-| Type     | Example                |
-| -------- | ---------------------- |
-| integer  | 1                      |
-| float    | 0.5                    |
-| rational | 1/2                    |
-| string   | "string with \" quote" |
-| keyword  | :kebab-case?           |
-| symbol   | kebab-case?            |
-| list     | (+ 2 3)                |
+| Type     | Example                 |
+| -------- | ----------------------- |
+| integer  | 1                       |
+| float    | 0.5                     |
+| rational | 1/2                     |
+| boolean  | true \| false           |
+| string   | "string with \\" quote" |
+| keyword  | :kebab-case?            |
+| symbol   | kebab-case?             |
+| list     | (+ 2 3)                 |
 
 ## Built-In Data Types
 

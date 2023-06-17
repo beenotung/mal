@@ -2,6 +2,7 @@ import { gcd } from './math'
 
 export type AST =
   | Num
+  | boolean
   | string
   | AST[]
   | Keyword

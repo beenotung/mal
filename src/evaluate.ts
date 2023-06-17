@@ -14,13 +14,18 @@ export function evaluate(ast: AST): AST {
     })
   }
   if (
-    typeof ast === 'string' ||
     typeof ast === 'number' ||
+    typeof ast === 'boolean' ||
+    typeof ast === 'string' ||
     ast instanceof Set ||
     ast instanceof Map ||
-    ast.type === 'rational' ||
-    ast.type === 'keyword'
+    ast.type === 'rational'
   ) {
+    return ast
+  }
+  if (ast.type === 'keyword') {
+    if (ast.value === 'true') return true
+    if (ast.value === 'false') return false
     return ast
   }
   let _: never = ast
