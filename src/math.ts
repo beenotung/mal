@@ -3,6 +3,8 @@ export function lcm(a: number, b: number): number {
 }
 
 export function gcd(a: number, b: number): number {
+  a = Math.abs(a)
+  b = Math.abs(b)
   let tmp
   for (;;) {
     if (b === 0) return a

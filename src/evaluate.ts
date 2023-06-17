@@ -33,11 +33,6 @@ export function evaluate(ast: AST): AST {
   })
 }
 
-let add_operator = symbol('+')
-let minus_operator = symbol('-')
-let multiply_operator = symbol('*')
-let divide_operator = symbol('/')
-
 function evaluate_list(list: AST[]): AST {
   if (list.length === 0) {
     throw new EvaluationError({
@@ -45,25 +40,18 @@ function evaluate_list(list: AST[]): AST {
       message: 'empty list',
     })
   }
-  let fn = list[0]
+  let funcSymbol = list[0]
   let args = list.slice(1)
-  switch (fn) {
-    case add_operator:
-      return add(args)
-    case minus_operator:
-      return minus(args)
-    case multiply_operator:
-      return multiply(args)
-    case divide_operator:
-      return divide(args)
-    default:
-      throw new EvaluationError({
-        when: 'evaluate_list',
-        message: 'unexpected fn',
-        fn,
-        args,
-      })
+  let func = fns[funcSymbol as keyof typeof fns]
+  if (!func) {
+    throw new EvaluationError({
+      when: 'evaluate_list',
+      message: 'unexpected function',
+      funcSymbol,
+      args,
+    })
   }
+  return func(args)
 }
 
 function add(args: AST[]): AST {
@@ -217,10 +205,169 @@ function divide_two(left: AST, right: AST): AST {
   return multiply_two(left, right)
 }
 
+function abs(args: AST[]): AST {
+  let ast = castArgsLength(args, 1, { when: 'abs' })[0]
+  ast = evaluate(ast)
+  if (typeof ast === 'number') return Math.abs(ast)
+  ast = castRational(ast, { when: 'abs' })
+  return rational(Math.abs(ast.up), Math.abs(ast.down))
+}
+
+function acos(args: AST[]): AST {
+  return Math.acos(castNumArg(args, { when: 'acos' }))
+}
+
+function asin(args: AST[]): AST {
+  return Math.asin(castNumArg(args, { when: 'asin' }))
+}
+
+function atan(args: AST[]): AST {
+  return Math.atan(castNumArg(args, { when: 'atan' }))
+}
+
+function atan2(args: AST[]): AST {
+  args = castArgsLength(args, 2, { when: 'atan2' })
+  let x = evaluate(args[0])
+  x = castNum(x, { when: 'atan2' })
+  let y = evaluate(args[1])
+  y = castNum(y, { when: 'atan2' })
+  return Math.atan2(x, y)
+}
+
+function ceil(args: AST[]): AST {
+  return Math.ceil(castNumArg(args, { when: 'ceil' }))
+}
+
+function cos(args: AST[]): AST {
+  return Math.cos(castNumArg(args, { when: 'cos' }))
+}
+
+function exp(args: AST[]): AST {
+  return Math.exp(castNumArg(args, { when: 'exp' }))
+}
+
+function floor(args: AST[]): AST {
+  return Math.floor(castNumArg(args, { when: 'floor' }))
+}
+
+function log(args: AST[]): AST {
+  return Math.log(castNumArg(args, { when: 'log' }))
+}
+
+function max(args: AST[]): AST {
+  if (args.length === 0) return -Infinity
+  let ast_arr = args.map(ast => evaluate(ast))
+  let num_arr = ast_arr.map(ast => castNum(ast, { when: 'max' }))
+  let max_num = Math.max(...num_arr)
+  let index = num_arr.indexOf(max_num)
+  return ast_arr[index]
+}
+
+function min(args: AST[]): AST {
+  if (args.length === 0) return Infinity
+  let ast_arr = args.map(ast => evaluate(ast))
+  let num_arr = ast_arr.map(ast => castNum(ast, { when: 'min' }))
+  let min_num = Math.min(...num_arr)
+  let index = num_arr.indexOf(min_num)
+  return ast_arr[index]
+}
+
+function pow(args: AST[]): AST {
+  args = castArgsLength(args, 2, { when: 'pow' })
+  let x = evaluate(args[0])
+  let y = evaluate(args[1])
+
+  if (typeof x === 'number' && typeof y === 'number') {
+    return x ** y
+  }
+
+  if (typeof y === 'number') {
+    x = castRational(x, { when: 'pow' })
+    return rational(x.up ** y, x.down ** y)
+  }
+
+  x = castNum(x, { when: 'pow' })
+  y = castNum(y, { when: 'pow' })
+
+  return Math.atan2(x, y)
+}
+
+function random(args: AST[]): AST {
+  castArgsLength(args, 0, { when: 'random' })
+  return Math.random()
+}
+
+function round(args: AST[]): AST {
+  return Math.round(castNumArg(args, { when: 'round' }))
+}
+
+function sin(args: AST[]): AST {
+  return Math.sin(castNumArg(args, { when: 'sin' }))
+}
+
+function sqrt(args: AST[]): AST {
+  return Math.sqrt(castNumArg(args, { when: 'sqrt' }))
+}
+
+function tan(args: AST[]): AST {
+  return Math.tan(castNumArg(args, { when: 'tan' }))
+}
+
+let fns = {
+  [symbol('+')]: add,
+  [symbol('-')]: minus,
+  [symbol('*')]: multiply,
+  [symbol('/')]: divide,
+  [symbol('abs')]: abs,
+  [symbol('acos')]: acos,
+  [symbol('asin')]: asin,
+  [symbol('atan')]: atan,
+  [symbol('atan2')]: atan2,
+  [symbol('ceil')]: ceil,
+  [symbol('cos')]: cos,
+  [symbol('exp')]: exp,
+  [symbol('floor')]: floor,
+  [symbol('log')]: log,
+  [symbol('max')]: max,
+  [symbol('min')]: min,
+  [symbol('pow')]: pow,
+  [symbol('random')]: random,
+  [symbol('round')]: round,
+  [symbol('sin')]: sin,
+  [symbol('sqrt')]: sqrt,
+  [symbol('tan')]: tan,
+}
+
 function castRational(ast: AST, context: { when: string }): Rational {
   if (typeof ast == 'object' && !Array.isArray(ast) && ast.type === 'rational')
     return ast
   throw new EvaluationError({ when: context.when, message: 'expect Num', ast })
+}
+
+function castNum(ast: AST, context: { when: string }): number {
+  if (typeof ast === 'number') return ast
+  ast = castRational(ast, context)
+  return ast.up / ast.down
+}
+
+function castArgsLength(
+  args: AST[],
+  length: number,
+  context: { when: string },
+): AST[] {
+  if (args.length !== length)
+    throw new EvaluationError({
+      when: context.when,
+      expected_args_length: length,
+      actual_args_length: args.length,
+    })
+  return args
+}
+
+function castNumArg(args: AST[], context: { when: string }): number {
+  let ast = castArgsLength(args, 1, context)[0]
+  ast = evaluate(ast)
+  return castNum(ast, context)
 }
 
 type ContextType<T extends object = {}> = T & {
