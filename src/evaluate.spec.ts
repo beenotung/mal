@@ -399,6 +399,13 @@ describe('evaluate TestSuit', () => {
             [[true, false, true], false],
           ],
         ],
+        [
+          'mixed type',
+          [
+            [[1, '1'], true],
+            [[1, '2'], false],
+          ],
+        ],
       ])
     })
   })
