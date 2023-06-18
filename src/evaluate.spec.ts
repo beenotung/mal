@@ -287,6 +287,7 @@ describe('evaluate TestSuit', () => {
         [
           'real number',
           [
+            [[3, 2], true],
             [[3, 3], true],
             [[2, 3], false],
           ],
@@ -294,6 +295,7 @@ describe('evaluate TestSuit', () => {
         [
           'rational number',
           [
+            [[rational(3, 2), rational(2, 2)], true],
             [[rational(3, 2), rational(3, 2)], true],
             [[rational(2, 2), rational(3, 2)], false],
           ],
@@ -319,6 +321,7 @@ describe('evaluate TestSuit', () => {
         [
           'real number',
           [
+            [[2, 3], true],
             [[2, 2], true],
             [[3, 2], false],
           ],
@@ -326,6 +329,7 @@ describe('evaluate TestSuit', () => {
         [
           'rational number',
           [
+            [[rational(2, 2), rational(3, 2)], true],
             [[rational(2, 3), rational(2, 3)], true],
             [[rational(3, 2), rational(2, 2)], false],
           ],
