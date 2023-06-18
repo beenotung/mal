@@ -88,14 +88,14 @@ function parse_char_type(char: string) {
 
 function parse_number(rest: string): ParseResult<Num> {
   let when = 'parse_number(up)'
-  let up_result = parse_float(rest)
+  let up_result = parse_float(rest, { when, up: true })
   let value: Num = up_result.number
   rest = up_result.rest
 
   if (rest[0] === '/') {
     rest = rest.slice(1)
     when = 'parse_number(down)'
-    let down_result = parse_float(rest)
+    let down_result = parse_float(rest, { when, up: false })
     value = rational(up_result.number, down_result.number)
     rest = down_result.rest
   }
@@ -116,10 +116,29 @@ function parse_number(rest: string): ParseResult<Num> {
   return { value, rest }
 }
 
-function parse_float(rest: string) {
+function parse_float(rest: string, context: { when: string; up: boolean }) {
   let number = parseFloat(rest)
-  rest = rest.slice(String(number).length)
-  return { number, rest }
+  if (Number.isNaN(number))
+    throw new ParseError({
+      when: context.when,
+      message: 'expect number token',
+      rest,
+    })
+  let newRest = rest.slice(String(number).length)
+  if (newRest.length === 0 || (context.up && newRest[0] === '/'))
+    return { number, rest: newRest }
+  if (newRest.length > 0) {
+    let char_type = parse_char_type(newRest[0])
+    if (char_type !== whitespace && char_type !== close_bracket) {
+      throw new ParseError({
+        when: context.when,
+        message: 'unexpected char after number',
+        char_type,
+        rest,
+      })
+    }
+  }
+  return { number, rest: newRest }
 }
 
 function parse_string(rest: string): ParseResult<string> {

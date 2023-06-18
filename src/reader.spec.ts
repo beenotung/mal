@@ -19,6 +19,19 @@ describe('reader TestSuit', () => {
     expect(parse('2/3')).to.deep.equals(rational(2, 3))
   })
 
+  it('should reject extra char after number', () => {
+    expect(() => parse('2c')).to.throw(/parse_number\(up\)/)
+    expect(() => parse('2c')).to.throw('unexpected char after number')
+  })
+
+  it('should reject incomplete rational number', () => {
+    expect(() => parse('2/')).to.throw(/parse_number\(down\)/)
+    expect(() => parse('2/')).to.throw(/expect number token/)
+
+    expect(() => parse('2/3c')).to.throw(/parse_number\(down\)/)
+    expect(() => parse('2/3c')).to.throw(/unexpected char after number/)
+  })
+
   it('should parse string', () => {
     expect(parse('"12"')).to.equals('12')
   })
