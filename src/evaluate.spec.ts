@@ -418,6 +418,48 @@ describe('evaluate TestSuit', () => {
           ],
         ],
       ])
+      test('<>', [
+        [
+          'real number',
+          [
+            [[2, 2], false],
+            [[2, 3], true],
+          ],
+        ],
+        [
+          'rational number',
+          [
+            [[rational(2, 3), rational(2, 3)], false],
+            [[rational(2, 3), rational(3, 3)], true],
+          ],
+        ],
+        [
+          'string',
+          [
+            [['a', 'a'], false],
+            [['a', 'b'], true],
+          ],
+        ],
+        [
+          'boolean',
+          [
+            [[true, true], false],
+            [[false, false], false],
+            [[true, false], true],
+            [[false, true], true],
+            [[true], true],
+            [[true, true, true], false],
+            [[true, false, true], true],
+          ],
+        ],
+        [
+          'mixed type',
+          [
+            [[1, '1'], false],
+            [[1, '2'], true],
+          ],
+        ],
+      ])
     })
     describe('boolean expression', () => {
       function test(name: string, samples: [inputs: AST[], expected: AST][]) {

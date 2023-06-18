@@ -488,6 +488,31 @@ function equal_two(left: AST, right: AST): boolean {
   return left == right
 }
 
+function different(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: '<>',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    if (!different_two(left, right)) return false
+    left = right
+  }
+  return true
+}
+
+function different_two(left: AST, right: AST): boolean {
+  if (typeof left === 'boolean' && typeof right === 'boolean')
+    return left != right
+  left = castComparable(left, { when: '<>' })
+  right = castComparable(right, { when: '<>' })
+  return left != right
+}
+
 function and(args: AST[]): AST {
   if (args.length === 0)
     throw new EvaluationError({
@@ -576,6 +601,7 @@ let fn_dict = {
   [symbol('<')]: lesser,
   [symbol('<=')]: lesser_or_equal,
   [symbol('=')]: equal,
+  [symbol('<>')]: different,
   [symbol('and')]: and,
   [symbol('or')]: or,
   [symbol('not')]: not,
