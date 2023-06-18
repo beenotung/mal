@@ -7,10 +7,13 @@ export function evaluate(ast: AST): AST {
     return evaluate_list(ast)
   }
   if (typeof ast === 'symbol') {
+    if (ast in const_dict) {
+      return const_dict[ast]
+    }
     throw new EvaluationError({
       when: 'evaluate',
-      message: 'lookup not implemented',
-      keyword: ast,
+      message: 'symbol not defined',
+      symbol: ast,
     })
   }
   if (
@@ -19,13 +22,9 @@ export function evaluate(ast: AST): AST {
     typeof ast === 'string' ||
     ast instanceof Set ||
     ast instanceof Map ||
-    ast.type === 'rational'
+    ast.type === 'rational' ||
+    ast.type === 'keyword'
   ) {
-    return ast
-  }
-  if (ast.type === 'keyword') {
-    if (ast.value === 'true') return true
-    if (ast.value === 'false') return false
     return ast
   }
   let _: never = ast
@@ -45,7 +44,7 @@ function evaluate_list(list: AST[]): AST {
   }
   let funcSymbol = list[0]
   let args = list.slice(1)
-  let func = fns[funcSymbol as keyof typeof fns]
+  let func = fn_dict[funcSymbol as keyof typeof fn_dict]
   if (!func) {
     throw new EvaluationError({
       when: 'evaluate_list',
@@ -55,6 +54,14 @@ function evaluate_list(list: AST[]): AST {
     })
   }
   return func(args)
+}
+
+let const_dict = {
+  [symbol('true')]: true,
+  [symbol('false')]: false,
+  [symbol('pi')]: Math.PI,
+  [symbol('e')]: Math.E,
+  [symbol('phi')]: (1 + Math.sqrt(5)) / 2,
 }
 
 function add(args: AST[]): AST {
@@ -455,7 +462,63 @@ function equal_two(left: AST, right: AST): boolean {
   return left == right
 }
 
-let fns = {
+function and(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: 'and',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    left = and_two(left, right)
+    if (!left) return left
+  }
+  return left
+}
+
+function and_two(left: AST, right: AST): AST {
+  if (typeof left === 'boolean' && typeof right === 'boolean')
+    return left && right
+  left = castComparable(left, { when: 'and' })
+  right = castComparable(right, { when: 'and' })
+  return left && right
+}
+
+function or(args: AST[]): AST {
+  if (args.length === 0)
+    throw new EvaluationError({
+      when: 'or',
+      message: 'expect at least 1 args',
+      args,
+    })
+  let left = evaluate(args[0])
+  let right
+  for (let i = 1; i < args.length; i++) {
+    right = evaluate(args[i])
+    left = or_two(left, right)
+    if (!left) return left
+  }
+  return left
+}
+
+function or_two(left: AST, right: AST): AST {
+  if (typeof left === 'boolean' && typeof right === 'boolean')
+    return left || right
+  left = castComparable(left, { when: 'or' })
+  right = castComparable(right, { when: 'or' })
+  return left || right
+}
+
+function not(args: AST[]): boolean {
+  let ast = castArgsLength(args, 1, { when: 'not' })[0]
+  ast = evaluate(ast)
+  return !ast
+}
+
+let fn_dict = {
   [symbol('+')]: add,
   [symbol('-')]: minus,
   [symbol('*')]: multiply,
@@ -487,6 +550,9 @@ let fns = {
   [symbol('<')]: lesser,
   [symbol('<=')]: lesser_or_equal,
   [symbol('=')]: equal,
+  [symbol('and')]: and,
+  [symbol('or')]: or,
+  [symbol('not')]: not,
 }
 
 function castRational(ast: AST, context: { when: string }): Rational {

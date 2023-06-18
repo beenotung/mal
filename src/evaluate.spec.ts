@@ -17,10 +17,10 @@ describe('evaluate TestSuit', () => {
       expect(evaluate(keyword('dev-deps'))).to.equals(keyword('dev-deps'))
     })
     it('should echo true', () => {
-      expect(evaluate(keyword('true'))).to.be.true
+      expect(evaluate(symbol('true'))).to.be.true
     })
     it('should echo false', () => {
-      expect(evaluate(keyword('false'))).to.be.false
+      expect(evaluate(symbol('false'))).to.be.false
     })
   })
   describe('build-in data type', () => {
@@ -248,6 +248,17 @@ describe('evaluate TestSuit', () => {
           [[rational(1, 2)], Math.tan(1 / 2)],
         ])
       })
+      describe('math constant', () => {
+        it('should echo pi', () => {
+          expect(evaluate(symbol('pi'))).to.equals(Math.PI)
+        })
+        it('should echo e', () => {
+          expect(evaluate(symbol('e'))).to.equals(Math.E)
+        })
+        it('should echo phi', () => {
+          expect(evaluate(symbol('phi'))).to.equals((1 + Math.sqrt(5)) / 2)
+        })
+      })
     })
     describe('comparison expression', () => {
       function test(
@@ -406,6 +417,49 @@ describe('evaluate TestSuit', () => {
             [[1, '2'], false],
           ],
         ],
+      ])
+    })
+    describe('boolean expression', () => {
+      function test(name: string, samples: [inputs: AST[], expected: AST][]) {
+        it(`should compute ${name}`, () => {
+          for (let [inputs, expected] of samples) {
+            expect(evaluate([symbol(name), ...inputs])).to.equals(expected)
+          }
+        })
+      }
+      test('and', [
+        [[true, true], true],
+        [[true, false], false],
+        [[false, true], false],
+        [[false, false], false],
+        [[true], true],
+        [[true, true, true], true],
+        [[true, false, true], false],
+        [[1, 2], 2],
+        [[1, 0, 2], 0],
+        [['a', 'b'], 'b'],
+        [['a', '', 'c'], ''],
+      ])
+      test('or', [
+        [[true, true], true],
+        [[true, false], true],
+        [[false, true], true],
+        [[false, false], false],
+        [[true], true],
+        [[true, true, true], true],
+        [[false, true, false], true],
+        [[1, 2], 1],
+        [[1, 0, 2], 1],
+        [['a', 'b'], 'a'],
+        [['a', '', 'c'], 'a'],
+      ])
+      test('not', [
+        [[true], false],
+        [[false], true],
+        [[0], true],
+        [[1], false],
+        [['a'], false],
+        [[''], true],
       ])
     })
   })

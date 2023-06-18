@@ -2,16 +2,16 @@
 
 ## Expressions
 
-| Type     | Example                 |
-| -------- | ----------------------- |
-| integer  | 1                       |
-| float    | 0.5                     |
-| rational | 1/2                     |
-| boolean  | true \| false           |
-| string   | "string with \\" quote" |
-| keyword  | :kebab-case?            |
-| symbol   | kebab-case?             |
-| list     | (+ 2 3)                 |
+| Type     | Example                               |
+| -------- | ------------------------------------- |
+| integer  | 1                                     |
+| float    | 0.5                                   |
+| rational | 1/2                                   |
+| string   | "string with \\" quote"               |
+| keyword  | :kebab-case?                          |
+| symbol   | kebab-case?                           |
+| list     | (+ 2 3)                               |
+| compare  | (and (not (< pi 3.14)) (= 2 (+ 1 1))) |
 
 ## Built-In Data Types
 
@@ -21,6 +21,10 @@
 | Array     | (new-array 2 3)                   |
 | Set       | (new-set 2 3)                     |
 | Map       | (new-map :name "mal" "version" 1) |
+
+## Built-In Constant
+
+pi, e, phi, true, false
 
 ## To Do
 
