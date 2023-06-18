@@ -13,6 +13,24 @@
 | list     | (+ 2 3 4)                             |
 | compare  | (and (not (< pi 3.14)) (= 2 (+ 1 1))) |
 
+## Comparison Operators
+
+`>`: greater than
+
+`>=`: greater or equal
+
+`<`: less than
+
+`<=`: less or equal
+
+`=`: equal to
+
+`<>`: different to
+
+## Boolean Operators
+
+`and`, `or`, `not`
+
 ## String Operators
 
 `+`: concatenate
