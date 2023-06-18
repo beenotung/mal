@@ -249,7 +249,7 @@ describe('evaluate TestSuit', () => {
         ])
       })
     })
-    describe.only('comparison expression', () => {
+    describe('comparison expression', () => {
       function test(
         name: string,
         typeSamples: [
@@ -282,6 +282,13 @@ describe('evaluate TestSuit', () => {
             [[rational(3, 2), rational(3, 2)], false],
           ],
         ],
+        [
+          'string',
+          [
+            [['b', 'a'], true],
+            [['b', 'b'], false],
+          ],
+        ],
       ])
       test('>=', [
         [
@@ -300,6 +307,14 @@ describe('evaluate TestSuit', () => {
             [[rational(2, 2), rational(3, 2)], false],
           ],
         ],
+        [
+          'string',
+          [
+            [['b', 'a'], true],
+            [['b', 'b'], true],
+            [['a', 'b'], false],
+          ],
+        ],
       ])
       test('<', [
         [
@@ -314,6 +329,13 @@ describe('evaluate TestSuit', () => {
           [
             [[rational(2, 2), rational(3, 2)], true],
             [[rational(2, 3), rational(2, 3)], false],
+          ],
+        ],
+        [
+          'string',
+          [
+            [['a', 'b'], true],
+            [['a', 'a'], false],
           ],
         ],
       ])
@@ -334,6 +356,14 @@ describe('evaluate TestSuit', () => {
             [[rational(3, 2), rational(2, 2)], false],
           ],
         ],
+        [
+          'string',
+          [
+            [['a', 'b'], true],
+            [['a', 'a'], true],
+            [['b', 'a'], false],
+          ],
+        ],
       ])
       test('=', [
         [
@@ -348,6 +378,13 @@ describe('evaluate TestSuit', () => {
           [
             [[rational(2, 3), rational(2, 3)], true],
             [[rational(2, 3), rational(3, 3)], false],
+          ],
+        ],
+        [
+          'string',
+          [
+            [['a', 'a'], true],
+            [['a', 'b'], false],
           ],
         ],
       ])

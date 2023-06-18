@@ -356,8 +356,8 @@ function greater(args: AST[]): AST {
 }
 
 function greater_two(left: AST, right: AST): boolean {
-  left = castNum(left, { when: '>' })
-  right = castNum(right, { when: '>' })
+  left = castComparable(left, { when: '>' })
+  right = castComparable(right, { when: '>' })
   return left > right
 }
 
@@ -379,8 +379,8 @@ function greater_or_equal(args: AST[]): AST {
 }
 
 function greater_or_equal_two(left: AST, right: AST): boolean {
-  left = castNum(left, { when: '>=' })
-  right = castNum(right, { when: '>=' })
+  left = castComparable(left, { when: '>=' })
+  right = castComparable(right, { when: '>=' })
   return left >= right
 }
 
@@ -402,8 +402,8 @@ function lesser(args: AST[]): AST {
 }
 
 function lesser_two(left: AST, right: AST): boolean {
-  left = castNum(left, { when: '<' })
-  right = castNum(right, { when: '<' })
+  left = castComparable(left, { when: '<' })
+  right = castComparable(right, { when: '<' })
   return left < right
 }
 
@@ -425,8 +425,8 @@ function lesser_or_equal(args: AST[]): AST {
 }
 
 function lesser_or_equal_two(left: AST, right: AST): boolean {
-  left = castNum(left, { when: '<=' })
-  right = castNum(right, { when: '<=' })
+  left = castComparable(left, { when: '<=' })
+  right = castComparable(right, { when: '<=' })
   return left <= right
 }
 
@@ -448,8 +448,8 @@ function equal(args: AST[]): AST {
 }
 
 function equal_two(left: AST, right: AST): boolean {
-  left = castNum(left, { when: '=' })
-  right = castNum(right, { when: '=' })
+  left = castComparable(left, { when: '=' })
+  right = castComparable(right, { when: '=' })
   return left == right
 }
 
@@ -503,6 +503,11 @@ function castNum(ast: AST, context: { when: string }): number {
   if (typeof ast === 'number') return ast
   ast = castRational(ast, context)
   return ast.up / ast.down
+}
+
+function castComparable(ast: AST, context: { when: string }): number | string {
+  if (typeof ast === 'string') return ast
+  return castNum(ast, context)
 }
 
 function castArgsLength(
