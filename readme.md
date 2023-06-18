@@ -10,7 +10,7 @@
 | string   | "string with \\" quote"               |
 | keyword  | :kebab-case?                          |
 | symbol   | kebab-case?                           |
-| list     | (+ 2 3)                               |
+| list     | (+ 2 3 4)                             |
 | compare  | (and (not (< pi 3.14)) (= 2 (+ 1 1))) |
 
 ## Built-In Data Types
