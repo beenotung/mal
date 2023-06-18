@@ -462,5 +462,24 @@ describe('evaluate TestSuit', () => {
         [[''], true],
       ])
     })
+    describe('string operation', () => {
+      it('should evaluate +', () => {
+        expect(evaluate([symbol('+'), 'a'])).to.equals('a')
+        expect(evaluate([symbol('+'), 'a', 'b'])).to.equals('ab')
+        expect(evaluate([symbol('+'), 'a', 'b', 'c'])).to.equals('abc')
+      })
+      it('should evaluate -', () => {
+        expect(evaluate([symbol('-'), 'abc'])).to.equals('abc')
+        expect(evaluate([symbol('-'), 'ab', 'b'])).to.equals('a')
+        expect(evaluate([symbol('-'), 'ab', 'a'])).to.equals('b')
+        expect(evaluate([symbol('-'), 'abc', 'a', 'c'])).to.equals('b')
+      })
+      it('should evaluate *', () => {
+        expect(evaluate([symbol('*'), 'abc', 3])).to.equals('abc'.repeat(3))
+      })
+      it('should evaluate /', () => {
+        expect(evaluate([symbol('/'), 'abc', 'b'])).to.deep.equals(['a', 'c'])
+      })
+    })
   })
 })

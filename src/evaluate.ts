@@ -76,6 +76,9 @@ function add(args: AST[]): AST {
 }
 
 function add_two(left: AST, right: AST): AST {
+  if (typeof left === 'string' && typeof right === 'string') {
+    return left + right
+  }
   if (left === 0) return right
   if (right === 0) return left
   if (typeof left === 'number' && typeof right === 'number') {
@@ -106,6 +109,9 @@ function minus(args: AST[]): AST {
   }
   let left = evaluate(args[0])
   if (args.length === 1) {
+    if (typeof left === 'string') {
+      return left
+    }
     if (typeof left === 'number') {
       return -left
     }
@@ -119,6 +125,9 @@ function minus(args: AST[]): AST {
 }
 
 function minus_two(left: AST, right: AST): AST {
+  if (typeof left === 'string' && typeof right === 'string') {
+    return left.replace(right, '')
+  }
   if (right === 0) return left
   if (typeof left === 'number' && typeof right === 'number') {
     return left - right
@@ -147,6 +156,12 @@ function multiply(args: AST[]): AST {
     return 1
   }
   let left = evaluate(args[0])
+  if (typeof left === 'string') {
+    let when = 'repeat(*)'
+    castArgsLength(args, 2, { when })
+    let right = castNum(evaluate(args[1]), { when })
+    return left.repeat(right)
+  }
   for (let i = 1; i < args.length; i++) {
     left = multiply_two(left, evaluate(args[i]))
   }
@@ -183,6 +198,12 @@ function divide(args: AST[]): AST {
     return 1
   }
   let left = evaluate(args[0])
+  if (typeof left === 'string') {
+    let when = 'split(/)'
+    castArgsLength(args, 2, { when })
+    let right = castString(evaluate(args[1]), { when })
+    return left.split(right)
+  }
   if (args.length === 1) {
     return one_divide(left)
   }
@@ -190,6 +211,11 @@ function divide(args: AST[]): AST {
     left = divide_two(left, evaluate(args[i]))
   }
   return left
+}
+
+function split(left: string, right: AST): AST {
+  right = castNum(right, { when: 'split(/)' })
+  return left.repeat(right)
 }
 
 function one_divide(ast: AST): AST {
@@ -571,6 +597,15 @@ function castNum(ast: AST, context: { when: string }): number {
   if (typeof ast === 'number') return ast
   ast = castRational(ast, context)
   return ast.up / ast.down
+}
+
+function castString(ast: AST, context: { when: string }): string {
+  if (typeof ast === 'string') return ast
+  throw new EvaluationError({
+    when: context.when,
+    message: 'expect string',
+    ast,
+  })
 }
 
 function castComparable(ast: AST, context: { when: string }): number | string {

@@ -13,6 +13,16 @@
 | list     | (+ 2 3 4)                             |
 | compare  | (and (not (< pi 3.14)) (= 2 (+ 1 1))) |
 
+## String Operators
+
+`+`: concatenate
+
+`-`: replace pattern to space
+
+`*`: repeat
+
+`/`: split by pattern
+
 ## Built-In Data Types
 
 | Data Type | Example Creation Expression       |
