@@ -448,6 +448,8 @@ function equal(args: AST[]): AST {
 }
 
 function equal_two(left: AST, right: AST): boolean {
+  if (typeof left === 'boolean' && typeof right === 'boolean')
+    return left === right
   left = castComparable(left, { when: '=' })
   right = castComparable(right, { when: '=' })
   return left == right
