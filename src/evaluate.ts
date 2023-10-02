@@ -361,7 +361,7 @@ function new_map(args: AST[]): AST {
   if (args.length % 2 !== 0)
     throw new EvaluationError({
       when: 'new_map',
-      message: 'expect odd number of args',
+      message: 'expect even number of args',
       args,
     })
   let map = new Map()
