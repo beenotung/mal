@@ -7,8 +7,9 @@
 | integer  | 1                                     |
 | float    | 0.5                                   |
 | rational | 1/2                                   |
-| string   | "string with \\" quote"               |
+| string   | "string with \\" double quote"        |
 | keyword  | :kebab-case?                          |
+| quote    | 'kebab-case?                          |
 | symbol   | kebab-case?                           |
 | list     | (+ 2 3 4)                             |
 | compare  | (and (not (< pi 3.14)) (= 2 (+ 1 1))) |
