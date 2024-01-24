@@ -162,7 +162,9 @@ export type AST =
   | { type: typeof type_keyword; value: string }
   | { type: typeof type_quote; value: AST }
   | { type: typeof type_symbol; value: string }
-  | { type: typeof type_list; value: AST[] }
+  | ListAST
+
+type ListAST = { type: typeof type_list; value: AST[] }
 
 function print(context: Context, ast: AST) {
   switch (ast.type) {
@@ -200,8 +202,39 @@ function print(context: Context, ast: AST) {
   }
 }
 
-function evaluate(ast: AST): AST {
-  return ast
+let func_dict: Record<string, (ast: ListAST) => AST> = {}
+
+func_dict['+'] = ast => {
+  let list = ast.value
+  let acc = 0
+  for (let i = 1; i < list.length; i++) {
+    acc += list[i].value as number
+  }
+  if (Number.isInteger(acc)) {
+    return { type: type_int, value: acc }
+  }
+  if (Number.isFinite(acc)) {
+    return { type: type_float, value: acc }
+  }
+  if (typeof acc == 'string') {
+    return { type: type_string, value: acc }
+  }
+  throw new Error('unknown result of "+": ' + JSON.stringify(acc))
+}
+
+export function evaluate(ast: AST): AST {
+  if (ast.type == type_list) {
+    if (ast.value.length == 0) {
+      throw new Error('cannot evaluate empty list')
+    }
+    let func_name = ast.value[0].value as string
+    let func = func_dict[func_name]
+    if (!func) {
+      throw new Error('undefined function: ' + JSON.stringify(func_name))
+    }
+    return func(ast)
+  }
+  throw new Error('cannot evaluate ast type: ' + ast.type)
 }
 
 if (__filename == process.argv[1]) {
