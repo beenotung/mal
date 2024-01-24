@@ -193,6 +193,7 @@ function print(context: Context, ast: AST) {
         print(context, list[i])
       }
       context.write(')')
+      break
     }
     default:
       throw new Error('not implemented: print type: ' + ast.type)
