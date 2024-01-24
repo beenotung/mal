@@ -10,7 +10,7 @@ function main() {
     input: process.stdin,
     output: process.stdout,
   }
-  process.stdout.write('1')
+  console.log('running repl...')
   let io = readline.createInterface(options)
   let context: Context = {
     question: io.question.bind(io),
