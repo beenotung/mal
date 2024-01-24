@@ -410,6 +410,7 @@ describe('evaluate TestSuit', () => {
             [[true, false, true], false],
           ],
         ],
+        ['keyword', [[[keyword('name'), keyword('name')], true]]],
         [
           'mixed type',
           [
