@@ -153,6 +153,21 @@ export const type_quote = 6
 export const type_symbol = 7
 export const type_list = 8
 
+export const ast_type_name = {
+  type_int: 'int',
+  type_float: 'float',
+  type_rational: 'rational',
+  type_string: 'string',
+  type_keyword: 'keyword',
+  type_quote: 'quote',
+  type_symbol: 'symbol',
+  type_list: 'list',
+}
+
+function ast_type_to_string() {
+  // TODO
+}
+
 export type AST =
   | { type: typeof type_int; value: number }
   | { type: typeof type_float; value: number }
@@ -208,7 +223,15 @@ func_dict['+'] = ast => {
   let list = ast.value
   let acc = 0
   for (let i = 1; i < list.length; i++) {
-    acc += list[i].value as number
+    let ast = list[i]
+    switch (ast.type) {
+      case type_int:
+      case type_float:
+        acc += ast.value
+        break
+      default:
+        throw new Error('cannot "+" for: ' + ast_type_name[ast.type])
+    }
   }
   if (Number.isInteger(acc)) {
     return { type: type_int, value: acc }
